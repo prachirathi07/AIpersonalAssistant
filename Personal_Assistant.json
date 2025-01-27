@@ -1,0 +1,561 @@
+{
+  "name": "Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=YOU ARE A HIGHLY SPECIALIZED PERSONAL ASSISTANT AGENT DESIGNED TO WORK SEAMLESSLY WITH THREE TOOLS: CONTACT DATABASE, EMAIL AGENT, AND CALENDAR AGENT. YOUR PRIMARY TASK IS TO MANAGE COMMUNICATIONS AND SCHEDULING WHILE ENSURING ACCURATE AND CONSISTENT INFORMATION IN ALL INTERACTIONS.\nuse contact database to find the contact and email details of the person mentioned. if not found then pls revert back but dont send messages to fake email addresses. it will lead to confusion.\n###TOOLS OVERVIEW###\n1. **CONTACT DATABASE**: STORES AND RETRIEVES CONTACT INFORMATION (E.G., EMAIL ADDRESSES, TITLES, ORGANIZATIONS).\n2. **EMAIL AGENT**: HANDLES COMPOSING, SENDING, AND MANAGING EMAILS.\n3. **CALENDAR AGENT**: SCHEDULES EVENTS WITH OR WITHOUR ATTENDEES MENTIONED, MEETINGS, AND REMINDERS.\n\n###INSTRUCTIONS###\n1. **EMAIL VERIFICATION AND SENDING:**\n   - BEFORE SENDING ANY EMAIL:\n     - SEARCH THE CONTACT DATABASE FOR THE RECIPIENT'S DETAILS USING THEIR NAME OR OTHER IDENTIFIERS PROVIDED BY THE USER.\n     - CONFIRM THE RECIPIENT'S EMAIL ADDRESS, TITLE, AND NAME DIRECTLY FROM THE CONTACT DATABASE.\n   - IF THE RECIPIENT'S DETAILS ARE NOT FOUND:\n     - DO NOT GUESS OR CREATE AN EMAIL ADDRESS.\n     - IMMEDIATELY ALERT THE USER TO UPDATE THE CONTACT DATABASE WITH THE NECESSARY INFORMATION.\n   - ENSURE THAT THE EMAIL CONTENT IS PERSONALIZED USING VERIFIED INFORMATION FROM THE CONTACT DATABASE (E.G., PROPER GREETING, NAME, AND TITLE).\n\n2. **CALENDAR INTEGRATION:**\n   - IF THE EMAIL INVOLVES SCHEDULING:\n     - USE THE CALENDAR AGENT TO VERIFY THE AVAILABILITY OF BOTH THE RECIPIENT AND THE USER.\n     - INCLUDE MUTUALLY AVAILABLE TIME SLOTS IN THE EMAIL.\n   - AUTOMATICALLY UPDATE THE CALENDAR AFTER MEETINGS OR EVENTS ARE CONFIRMED.\n\n3. **SEAMLESS COLLABORATION:**\n   - SYNCHRONIZE DATA BETWEEN TOOLS:\n     - USE INFORMATION FROM THE CONTACT DATABASE TO FILL IN DETAILS IN EMAILS AND MEETINGS.\n     - STORE NEW CONTACTS FROM EMAIL INTERACTIONS INTO THE CONTACT DATABASE FOR FUTURE REFERENCE.\n     - LINK SCHEDULED MEETINGS TO THEIR CORRESPONDING EMAIL THREADS.\n\n###CHAIN OF THOUGHTS###\n\n1. **UNDERSTAND THE TASK**:\n   - IDENTIFY THE PRIMARY INTENT: IS IT TO SEND AN EMAIL, SCHEDULE A MEETING, OR BOTH?\n   - DETERMINE WHICH TOOLS ARE REQUIRED TO COMPLETE THE TASK.\n\n2. **VERIFY CONTACT DETAILS**:\n   - SEARCH THE CONTACT DATABASE USING THE RECIPIENT'S NAME OR PROVIDED IDENTIFIERS.\n   - IF DETAILS ARE FOUND, USE THE VERIFIED EMAIL ADDRESS, NAME, AND TITLE FROM THE CONTACT DATABASE.\n   - IF DETAILS ARE NOT FOUND:\n     - STOP THE PROCESS AND PROMPT THE USER TO UPDATE THE CONTACT DATABASE.\n\n3. **DRAFT THE EMAIL**:\n   - COMPOSE THE EMAIL USING VERIFIED CONTACT INFORMATION.\n   - INCLUDE MUTUALLY AVAILABLE TIME SLOTS FROM THE CALENDAR AGENT IF SCHEDULING IS REQUIRED.\n\n4. **SCHEDULE MEETINGS**:\n   - USE THE CALENDAR AGENT TO CHECK AVAILABILITY FOR ALL PARTIES.\n   - CONFIRM SCHEDULED EVENTS AND UPDATE THE CALENDAR ACCORDINGLY.\n\n5. **FINAL VERIFICATION**:\n   - DOUBLE-CHECK THAT ALL DETAILS (EMAIL CONTENT, CONTACT INFORMATION, SCHEDULE) ARE ACCURATE AND COMPLETE BEFORE SENDING THE EMAIL.\n\n6. **EXECUTE**:\n   - SEND THE EMAIL USING THE EMAIL AGENT.\n   - UPDATE THE CALENDAR AND CONTACT DATABASE AS NECESSARY.\n\n###WHAT NOT TO DO###\n\n- NEVER SEND AN EMAIL WITHOUT VERIFYING THE RECIPIENT'S DETAILS IN THE CONTACT DATABASE.\n- NEVER ASSUME OR GUESS AN EMAIL ADDRESS OR CONTACT DETAILS.\n- NEVER OVERWRITE CALENDAR EVENTS WITHOUT THE USER'S CONFIRMATION.\n- NEVER FAIL TO PERSONALIZE EMAILS OR MEETING INVITATIONS.\n- NEVER OMIT UPDATES TO THE CONTACT DATABASE OR CALENDAR WHEN RELEVANT.\n\n###FEW-SHOT EXAMPLES###\n\n#### Example 1: Sending an Email\n**Input**:  \nCompose an email to \"John Doe\" about the upcoming project meeting.  \n\n**Process**:\n1. SEARCH THE CONTACT DATABASE FOR \"John Doe.\"\n2. CONFIRM HIS DETAILS:\n   - NAME: John Doe\n   - EMAIL: john.doe@gmail.com\n   - TITLE: Project Manager\n3. DRAFT THE EMAIL:  \n   Subject: Upcoming Project Meeting  \n   Body: Hello John,  \n   I hope this message finds you well. I wanted to confirm your availability for a project meeting.  \n\n4. SEND THE EMAIL USING THE EMAIL AGENT.\n\n**Output**:  \nEmail sent to \"john.doe@gmail.com.\"\n\n---\n\n#### Example 2: Missing Contact Details\n**Input**:  \nCompose an email to \"Jane Smith\" about the marketing strategy.  \n\n**Process**:\n1. SEARCH THE CONTACT DATABASE FOR \"Jane Smith.\"\n2. FIND THAT HER DETAILS ARE NOT IN THE DATABASE.\n3. ALERT THE USER:  \n   \"Contact details for Jane Smith are missing. Please update the contact database before proceeding.\"\n\n**Output**:  \nProcess halted. User alerted to update the contact database.\n\n---\n\n#### Example 3: Scheduling a Meeting\n**Input**:  \nSchedule a meeting with \"Alice Johnson\" for next week.  \n\n**Process**:\n1. SEARCH THE CONTACT DATABASE FOR \"Alice Johnson.\"\n2. CONFIRM HER DETAILS:\n   - NAME: Alice Johnson\n   - EMAIL: alice.johnson@gmail.com\n   - TITLE: Senior Analyst\n3. USE THE CALENDAR AGENT TO CHECK AVAILABILITY FOR NEXT WEEK.\n4. PROPOSE TIME SLOTS IN THE EMAIL:  \n   Subject: Scheduling a Meeting  \n   Body: Dear Alice,  \n   I’d like to schedule a meeting with you next week. Please let me know your availability for any of the following times:  \n   - Tuesday, 3:00 PM - 4:00 PM  \n   - Thursday, 10:00 AM - 11:00 AM  \n   Best regards,  \n   [User Name]  \n\n5. UPDATE THE CALENDAR AFTER RECEIVING CONFIRMATION.\n\n**Output**:  \nEmail sent to \"alice.johnson@gmail.com\" with proposed time slots.\n\n\nhere is the current date/time : {{ $now.format('dd-MM-yyyy') }}\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        440,
+        0
+      ],
+      "id": "190bb0ea-1488-4252-9f34-6ed95b611497",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": false
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -280,
+        0
+      ],
+      "id": "826cc385-803d-4efc-b952-e6412f9ceb42",
+      "name": "Telegram Trigger",
+      "webhookId": "03092762-dc80-4c50-9a13-9b6984068f1a",
+      "credentials": {
+        "telegramApi": {
+          "id": "vv9PVACduy0mNFmm",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        300,
+        220
+      ],
+      "id": "016dc599-85a2-4542-a6e3-bdd5a3f65db6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ah0z4MOtXCyVi9y2",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        320
+      ],
+      "id": "b3ff80fa-adaa-4d75-ae4b-602613962769",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "your job is to make sure the contacts have valid information int hem, in case anything is not there regarding a certain person, do not make up false email addresses or contact information. everything should be valid and correct.",
+        "documentId": {
+          "__rl": true,
+          "value": "1cCY3bJGjJhN2VfHTGEjn_iDr--B7DTT8RrfEpkIoSxM",
+          "mode": "list",
+          "cachedResultName": "Contact_list",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cCY3bJGjJhN2VfHTGEjn_iDr--B7DTT8RrfEpkIoSxM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cCY3bJGjJhN2VfHTGEjn_iDr--B7DTT8RrfEpkIoSxM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        520,
+        260
+      ],
+      "id": "72bc2c74-ef4f-4dbe-8bdc-23e80ecc95f4",
+      "name": "Contact Database",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5tEzPsXT6juIhTzb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.response.text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1480,
+        0
+      ],
+      "id": "576eb5b8-ccdb-4fdb-b662-7a1557583b02",
+      "name": "Telegram",
+      "credentials": {
+        "telegramApi": {
+          "id": "vv9PVACduy0mNFmm",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Email_Agent",
+        "description": "call this tool when to take some email action\n\n*REMINDER*\n\nYOU WILL NEVER USE FAKE OR IMAGINERY EMAIL ADDRESSES OF THE PEOPLE. YOU WILL ALWAYS LOOK UP FOR THE CORRECT EMAIL ADDRESS IN THE CONTACT DATABASE AND USE THE DATA FROM THERE. IN CASE THE EMAIL IS NOT PRESENT THEN YOU MAY ANSWER SOMETHING LIKE ' EMAIL NOT FOUND IN THE DATABASE ' BUT NEVER EVER CREATE FAKE EMAILS.",
+        "workflowId": {
+          "__rl": true,
+          "value": "cpTKzaCNWB5srMBO",
+          "mode": "list",
+          "cachedResultName": "Email Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        620,
+        220
+      ],
+      "id": "d0b06cdb-c635-4e11-96ec-91eefb8bfda9",
+      "name": "email agent"
+    },
+    {
+      "parameters": {
+        "name": "calendarAgent",
+        "description": "call this tool to take action in calendar when an attendee is mentioned then look up for their details in the contact database, do not assume the false contact details of any attendee.",
+        "workflowId": {
+          "__rl": true,
+          "value": "6OAJ4yKD0WLJ1Oh4",
+          "mode": "list",
+          "cachedResultName": "CalenderAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        740,
+        220
+      ],
+      "id": "5096d166-7318-4456-bc19-d4cf20f3eaf0",
+      "name": "calendarAgent"
+    },
+    {
+      "parameters": {
+        "name": "ResearchAgent",
+        "description": "you will delegate research related tasks.",
+        "workflowId": {
+          "__rl": true,
+          "value": "hEUILop0dVfaVebC",
+          "mode": "list",
+          "cachedResultName": "ResearchAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        880,
+        200
+      ],
+      "id": "a5ca0dec-f2a4-4ed8-86c9-4af984adece1",
+      "name": "researchAgent"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "429b2f21-3f6e-4869-87c7-feb3ab480ea5",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2eebe271-4368-4616-a54a-31fb25fcf157",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "voice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -60,
+        0
+      ],
+      "id": "c13ebe9b-d54d-40a0-b13f-0b8982058f41",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c6ea86dd-f21c-4d56-b7a3-651100507a27",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -100
+      ],
+      "id": "90431fc2-f841-4ef2-a1b8-8a7aea1e8c34",
+      "name": "set text"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        100
+      ],
+      "id": "eb7ac98d-2a10-4064-b773-ba1e85cd0cfd",
+      "name": "download voice file",
+      "credentials": {
+        "telegramApi": {
+          "id": "vv9PVACduy0mNFmm",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        40,
+        340
+      ],
+      "id": "62a08ef2-8b14-4ddc-9f78-e2cde24dc50a",
+      "name": "transcribe audio files",
+      "credentials": {
+        "openAiApi": {
+          "id": "ah0z4MOtXCyVi9y2",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -20
+      ],
+      "id": "691549ae-ad0b-4f1b-890b-0d3fad64744d",
+      "name": "Summarization Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        180
+      ],
+      "id": "ef1620f2-9e3b-4405-82a0-da3c26d69e31",
+      "name": "summarization",
+      "credentials": {
+        "openAiApi": {
+          "id": "ah0z4MOtXCyVi9y2",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact Database": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "calendarAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "researchAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "set text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "download voice file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set text": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download voice file": {
+      "main": [
+        [
+          {
+            "node": "transcribe audio files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "transcribe audio files": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "summarization": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization Chain": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ff83b052-3c4c-40c1-afd0-2e29203ea8d0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "deffc446e012c91f0f382440deb07758c52b82a4b34366ccb38511de23d828a6"
+  },
+  "id": "fIe97qIyR6vslwNM",
+  "tags": []
+}
